@@ -290,18 +290,41 @@ const App: React.FC = () => {
               {examData.mcqs && examData.mcqs.length > 0 && (
                 <section>
                   <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Phần I (MCQ) - Trích đoạn</h4>
-                  {examData.mcqs.slice(0, 2).map((q, i) => (
-                    <div key={i} className="mb-6">
-                      <p className="font-bold text-slate-800 mb-2 leading-relaxed">Câu {i+1}. <ChemicalText text={q.question} /></p>
-                      <div className="grid grid-cols-2 gap-2 text-xs text-slate-600">
-                        {['A', 'B', 'C', 'D'].map(opt => (
-                          <p key={opt} className={q.correctAnswer === opt ? 'text-blue-600 font-bold' : ''}>
-                            {opt}. <ChemicalText text={(q.options as any)[opt]} />
-                          </p>
-                        ))}
+                  {examData.mcqs.slice(0, 4).map((q, i) => {
+                    const optA = q.options?.A || '';
+                    const optB = q.options?.B || '';
+                    const optC = q.options?.C || '';
+                    const optD = q.options?.D || '';
+                    const lengths = [optA.length, optB.length, optC.length, optD.length];
+                    const maxLen = Math.max(...lengths);
+                    const totalLen = lengths.reduce((sum, l) => sum + l, 0);
+
+                    let gridClass = "grid-cols-1";
+                    let layoutDesc = "Bố trí 4 hàng";
+                    if (maxLen <= 18 && totalLen <= 65) {
+                      gridClass = "grid-cols-2 sm:grid-cols-4";
+                      layoutDesc = "Bố trí 1 hàng";
+                    } else if (maxLen <= 42) {
+                      gridClass = "grid-cols-1 sm:grid-cols-2";
+                      layoutDesc = "Bố trí 2 hàng";
+                    }
+
+                    return (
+                      <div key={i} className="mb-6">
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <p className="font-bold text-slate-800 leading-relaxed">Câu {i+1}. <ChemicalText text={q.question} /></p>
+                          <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-medium shrink-0 whitespace-nowrap">{layoutDesc}</span>
+                        </div>
+                        <div className={`grid ${gridClass} gap-2 text-xs text-slate-600 pl-2`}>
+                          {(['A', 'B', 'C', 'D'] as const).map(opt => (
+                            <p key={opt} className={q.correctAnswer === opt ? 'text-blue-600 font-bold' : ''}>
+                              <span className="font-bold">{opt}. </span><ChemicalText text={(q.options as any)[opt]} />
+                            </p>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </section>
               )}
               <section className={examData.mcqs && examData.mcqs.length > 0 ? '' : 'md:col-span-2'}>

@@ -1,5 +1,5 @@
 
-import { Document, Packer, Paragraph, TextRun, AlignmentType, UnderlineType } from "docx";
+import { Document, Packer, Paragraph, TextRun, AlignmentType, UnderlineType, Table, TableRow, TableCell, WidthType, BorderStyle } from "docx";
 import { ExamData } from "./types";
 
 const parseChemicalText = (text: string, options: { bold?: boolean, italics?: boolean, underline?: boolean, size?: number, color?: string } = {}): TextRun[] => {
@@ -37,6 +37,50 @@ const parseChemicalText = (text: string, options: { bold?: boolean, italics?: bo
       color: options.color,
       underline: options.underline ? { type: UnderlineType.SINGLE } : undefined,
     });
+  });
+};
+
+const noBorder = { style: BorderStyle.NONE, size: 0, color: 'auto' };
+const tableBorders = {
+  top: noBorder,
+  bottom: noBorder,
+  left: noBorder,
+  right: noBorder,
+  insideHorizontal: noBorder,
+  insideVertical: noBorder,
+};
+
+const createOptionCell = (
+  opt: 'A' | 'B' | 'C' | 'D',
+  text: string,
+  isCorrect: boolean,
+  widthPercent: number,
+  paragraphSpacing: { before: number, after: number, line: number }
+) => {
+  return new TableCell({
+    borders: tableBorders,
+    margins: { top: 20, bottom: 20, left: 60, right: 60 },
+    width: { size: widthPercent, type: WidthType.PERCENTAGE },
+    children: [
+      new Paragraph({
+        spacing: paragraphSpacing,
+        children: [
+          new TextRun({
+            text: `${opt}. `,
+            bold: true,
+            size: 22,
+            underline: isCorrect ? { type: UnderlineType.SINGLE } : undefined,
+            color: isCorrect ? "0000FF" : undefined
+          }),
+          ...parseChemicalText(text, {
+            size: 22,
+            bold: false,
+            underline: isCorrect,
+            color: isCorrect ? "0000FF" : undefined
+          })
+        ]
+      })
+    ]
   });
 };
 
@@ -96,21 +140,76 @@ export const generateExamDoc = async (data: ExamData, isAnswerKey: boolean = fal
         ],
       }));
 
-      (['A', 'B', 'C', 'D'] as const).forEach(opt => {
-        const isCorrect = isAnswerKey && q.correctAnswer === opt;
-        children.push(new Paragraph({
-          indent: { left: 420 },
-          spacing: paragraphSpacing,
-          children: [
-            ...parseChemicalText(`${opt}. ${q.options[opt]}`, {
-              size: 22,
-              bold: false,
-              underline: isCorrect,
-              color: isCorrect ? "0000FF" : undefined
+      const optA = q.options?.A || '';
+      const optB = q.options?.B || '';
+      const optC = q.options?.C || '';
+      const optD = q.options?.D || '';
+
+      const lengths = [optA.length, optB.length, optC.length, optD.length];
+      const maxLen = Math.max(...lengths);
+      const totalLen = lengths.reduce((sum, l) => sum + l, 0);
+
+      if (maxLen <= 18 && totalLen <= 65) {
+        // Bố trí trên 01 hàng (4 cột: A, B, C, D)
+        children.push(new Table({
+          width: { size: 100, type: WidthType.PERCENTAGE },
+          borders: tableBorders,
+          rows: [
+            new TableRow({
+              children: [
+                createOptionCell('A', optA, isAnswerKey && q.correctAnswer === 'A', 25, paragraphSpacing),
+                createOptionCell('B', optB, isAnswerKey && q.correctAnswer === 'B', 25, paragraphSpacing),
+                createOptionCell('C', optC, isAnswerKey && q.correctAnswer === 'C', 25, paragraphSpacing),
+                createOptionCell('D', optD, isAnswerKey && q.correctAnswer === 'D', 25, paragraphSpacing),
+              ]
             })
-          ],
+          ]
         }));
-      });
+      } else if (maxLen <= 42) {
+        // Bố trí trên 02 hàng (mỗi hàng 2 cột: A-B, C-D)
+        children.push(new Table({
+          width: { size: 100, type: WidthType.PERCENTAGE },
+          borders: tableBorders,
+          rows: [
+            new TableRow({
+              children: [
+                createOptionCell('A', optA, isAnswerKey && q.correctAnswer === 'A', 50, paragraphSpacing),
+                createOptionCell('B', optB, isAnswerKey && q.correctAnswer === 'B', 50, paragraphSpacing),
+              ]
+            }),
+            new TableRow({
+              children: [
+                createOptionCell('C', optC, isAnswerKey && q.correctAnswer === 'C', 50, paragraphSpacing),
+                createOptionCell('D', optD, isAnswerKey && q.correctAnswer === 'D', 50, paragraphSpacing),
+              ]
+            })
+          ]
+        }));
+      } else {
+        // Bố trí trên 04 hàng (mỗi đáp án 1 hàng)
+        (['A', 'B', 'C', 'D'] as const).forEach(opt => {
+          const isCorrect = isAnswerKey && q.correctAnswer === opt;
+          children.push(new Paragraph({
+            indent: { left: 420 },
+            spacing: paragraphSpacing,
+            children: [
+              new TextRun({
+                text: `${opt}. `,
+                bold: true,
+                size: 22,
+                underline: isCorrect ? { type: UnderlineType.SINGLE } : undefined,
+                color: isCorrect ? "0000FF" : undefined
+              }),
+              ...parseChemicalText(q.options[opt], {
+                size: 22,
+                bold: false,
+                underline: isCorrect,
+                color: isCorrect ? "0000FF" : undefined
+              })
+            ],
+          }));
+        });
+      }
     });
   }
 
