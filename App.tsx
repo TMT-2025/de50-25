@@ -110,16 +110,22 @@ const App: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <header className="text-center mb-10 relative">
-        <div className="absolute top-0 right-0 hidden md:block">
-          <div className="bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-full flex items-center gap-2 shadow-sm">
+      <header className="text-center mb-10">
+        <div className="flex flex-col items-center gap-3 mb-5">
+          <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 px-3.5 py-1 rounded-full shadow-xs">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
             </span>
-            <span className="text-[10px] font-black text-blue-700 tracking-tighter uppercase">Gemini 3.5 Flash Optimized</span>
+            <span className="text-[10px] font-black text-blue-700 tracking-wider uppercase">Gemini 3.5 Flash Optimized</span>
+          </div>
+
+          <div className="bg-gradient-to-r from-blue-50/90 via-indigo-50/90 to-blue-50/90 border border-blue-200/80 text-blue-950 rounded-2xl px-5 py-3.5 shadow-xs max-w-3xl text-xs md:text-sm leading-relaxed text-center">
+            <span className="inline-block mr-1.5 font-bold text-blue-600">💡 Hướng dẫn:</span>
+            Trong tùy chọn nâng cao bạn có thể bổ sung các yêu cầu như thêm <strong>Đơn vị kiến thức cụ thể (Module)</strong>, <strong>Tải lên file PDF tham khảo kiến thức cần luyện tập</strong>, hoặc <strong>Ghi chú yêu cầu riêng</strong>. Khi đó ứng dụng sẽ tạo đề ôn tập định hướng thêm theo các tùy chọn này.
           </div>
         </div>
+
         <h1 className="text-3xl md:text-4xl font-black text-blue-950 mb-3 uppercase tracking-tight">
           TẠO ĐỀ ÔN TẬP CHƯƠNG 50 MCQ & 25 True/False
         </h1>
