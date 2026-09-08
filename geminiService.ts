@@ -85,7 +85,9 @@ export const generateExam = async (
      - Đánh số tuần tự từ Câu 1 đến Câu 50.
   3. PHẦN II (25 câu trắc nghiệm Đúng/Sai):
      - BẮT BUỘC TẠO ĐỦ CHÍNH XÁC 25 CÂU HỎI.
-     - Mỗi câu gồm một bối cảnh (context) dài ít nhất 40 chữ và 4 phát biểu độc lập có id là 'a', 'b', 'c', 'd'.
+     - BỐI CẢNH THỰC TẾ: Mỗi câu PHẢI xây dựng một bối cảnh (context) gắn với tình huống thực tế, ứng dụng đời sống, sản xuất công nghiệp, môi trường, y tế, hoặc nghiên cứu khoa học... Bối cảnh cần có tham khảo/lấy cảm hứng từ các nguồn tài liệu, nghiên cứu, tạp chí khoa học nước ngoài uy tín (ví dụ: IUPAC, Royal Society of Chemistry, American Chemical Society (ACS), Nature, Journal of Chemical Education, PubChem, sách giáo khoa/tài liệu khoa học quốc tế...), có thể nêu ngắn gọn, tự nhiên tên nguồn/tổ chức tham khảo trong bối cảnh. Bối cảnh dài ít nhất 40 chữ, viết bằng tiếng Việt dễ hiểu.
+     - Mỗi câu gồm 4 phát biểu độc lập có id là 'a', 'b', 'c', 'd'; các phát biểu PHẢI bám sát, phù hợp trực tiếp với bối cảnh đã nêu (không phát biểu chung chung, tách rời bối cảnh).
+     - GIỚI HẠN KIẾN THỨC: Nội dung bối cảnh và phát biểu tuyệt đối KHÔNG được vượt quá chuẩn kiến thức, kĩ năng chương trình GDPT 2018 dành cho học sinh THPT (Lớp 10-12) tương ứng - không đưa vào kiến thức đại học, chuyên sâu, số liệu phức tạp hoặc thuật ngữ ngoài chương trình phổ thông.
      - Đánh giá tính đúng (true) hoặc sai (false) chính xác cho từng phát biểu.
   `;
 
