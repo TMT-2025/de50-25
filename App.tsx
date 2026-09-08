@@ -82,7 +82,12 @@ const App: React.FC = () => {
       setProgressMsg("Thành công!");
     } catch (err: any) {
       console.error(err);
-      setError("Không thể tạo đề. Vui lòng kiểm tra lại file PDF hoặc nội dung yêu cầu.");
+      const detail = err?.message ? String(err.message) : "";
+      setError(
+        detail
+          ? `Không thể tạo đề: ${detail}`
+          : "Không thể tạo đề. Vui lòng kiểm tra lại file PDF hoặc nội dung yêu cầu."
+      );
     } finally {
       setIsGenerating(false);
     }
