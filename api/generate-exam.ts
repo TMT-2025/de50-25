@@ -2,7 +2,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
 // Serverless function (chạy trên server Vercel, KHÔNG chạy trong trình duyệt).
-// GEMINI_API_KEY chỉ được đọc ở đây (process.env phía server) nên không bao giờ
+// GEMINI_API_KEY chỉ được đọc ở đây (process.env phí� server) nên không bao giờ
 // bị nhúng vào bundle JavaScript gửi cho trình duyệt người dùng.
 
 const EXAM_SCHEMA = {
@@ -151,8 +151,9 @@ export default async function handler(req: any, res: any) {
   }
 }
 
-// Cho phép hàm chạy tới 60 giây (Hobby plan) vì tạo 50 câu MCQ + 25 câu Đúng/Sai
-// có thể mất nhiệu thời gian hơn mức mặc định 10 giây.
+// Tạo 50 câu MCQ + 25 câu Đúng/Sai (kèm bối cảnh) có thể mất khá lâu, nên cho
+// phép hàm chạy tới mức tối đa hiện tại của gói Hobby (300 giây / 5 phút) để
+// tránh bị Vercel ngắt giữa chừng (lỗi 504) trước khi Gemini trả lời xong.
 export const config = {
-  maxDuration: 60,
+  maxDuration: 300,
 };
